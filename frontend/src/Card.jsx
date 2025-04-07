@@ -1,8 +1,7 @@
-import { useState } from "react"
-import cardBack from "./assets/225px-Cardback.jpg"
+import { Pricetag } from "./Pricetag"
 
-function Card({imgSource}) {
-    const [revealed, setRevealed] = useState(false)
+
+function Card({imgSource, price}) {
 
     return(
         <>
@@ -10,39 +9,31 @@ function Card({imgSource}) {
             width: "250px",
             height: "350px",
             userSelect: "none",
-            transform: revealed ? "rotateY(180deg)" : "rotateY(0deg)",
-            transformStyle: "preserve-3d",
-            transition: "transform 0.4s",
-        }}
-        onClick={(e) => {
-            e.preventDefault()
-            setRevealed(!revealed)
+            position: "relative"
         }}
         >
-            <div className="front" style={{
-                backfaceVisibility: "hidden",
-                position: "absolute",
+            <img src={imgSource} style={{
                 width: "100%",
-                height: "100%"
-            }}>
-                <img src={imgSource} style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "fill"
-                }}/>
-            </div>
-            <div className="back" style={{
-                transform: "rotateY(180deg)",
-                backfaceVisibility: "hidden",
+                height: "100%",
+                objectFit: "fill"
+            }}/>
+
+            <Pricetag price={price} size={"100px"} 
+            tagStyle={{
                 position: "absolute",
-                width: "100%",
-                height: "100%"
-            }}>
-                <img src={cardBack} style={{
-                    width: "100%",
-                    objectFit: "fill"
-                }}/>
-            </div>
+                right: "-15px",
+                bottom: "-40px"
+            }}
+            textStyle={{
+                position: "absolute",
+                right: "5px",
+                bottom: "5px",
+                fontWeight: "bolder",
+                fontFamily: "cursive",
+                fontSize: "14px",
+                color: "green",
+            }}
+            />
         </div>
         </>
     )

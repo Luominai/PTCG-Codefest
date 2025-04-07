@@ -1,8 +1,6 @@
 import { useState } from 'react'
-import { Card } from './Card'
 import { PlayerIcon } from './PlayerIcon'
-import { Pricetag } from './Pricetag'
-import { Modifier } from './Modifier'
+import { Slideshow } from './Slideshow'
 
 function App() {
     const [count, setCount] = useState(0)
@@ -34,19 +32,7 @@ function App() {
                         flexDirection: "column",
                         justifyContent: "center"
                     }}>
-                        <Card imgSource={"https://archives.bulbagarden.net/media/upload/thumb/0/0b/HoundoomScarletViolet34.jpg/270px-HoundoomScarletViolet34.jpg"}/>
-                        
-                        <div style={{
-                            display: "flex",
-                        }}>
-                            <div style={{
-                                display: "flex",
-                                flexGrow: 1
-                            }}>
-                                <Modifier/>
-                            </div>
-                            <Pricetag price={100}/>
-                        </div>
+                        <Slideshow/>
                     </div>
                 </div>
             </div>
