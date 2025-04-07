@@ -8,8 +8,8 @@ function PlayerIcon({color, name, money}) {
             width: "150px"
         }}>
             <div style={{
-                width: "50px",
-                height: "50px",
+                width: "35px",
+                height: "35px",
                 maskRepeat: "no-repeat",
                 maskSize: "100%",
 
@@ -22,7 +22,8 @@ function PlayerIcon({color, name, money}) {
             <div style={{
                 textAlign: "left",
                 fontWeight: "bold",
-                fontFamily: "cursive"
+                fontFamily: "cursive",
+                fontSize: "12px"
             }}>
                 <div style={{
                     color: color

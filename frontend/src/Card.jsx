@@ -7,8 +7,8 @@ function Card({imgSource}) {
     return(
         <>
         <div style={{
-            width: "150px",
-            height: "210px",
+            width: "250px",
+            height: "350px",
             userSelect: "none",
             transform: revealed ? "rotateY(180deg)" : "rotateY(0deg)",
             transformStyle: "preserve-3d",
@@ -28,7 +28,7 @@ function Card({imgSource}) {
                 <img src={imgSource} style={{
                     width: "100%",
                     height: "100%",
-                    objectFit: "scale-down"
+                    objectFit: "fill"
                 }}/>
             </div>
             <div className="back" style={{
@@ -40,7 +40,7 @@ function Card({imgSource}) {
             }}>
                 <img src={cardBack} style={{
                     width: "100%",
-                    objectFit: "scale-down"
+                    objectFit: "fill"
                 }}/>
             </div>
         </div>
