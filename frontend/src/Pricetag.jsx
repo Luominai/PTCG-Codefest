@@ -1,7 +1,8 @@
 import { IconContext } from "react-icons/lib"
 import { IoPricetagOutline, IoPricetag } from "react-icons/io5";
 
-function Pricetag({price, size, tagStyle, textStyle}) {
+function Pricetag({price, size, tagStyle, textStyle, fillColor, outlineColor}) {
+
 
     return (
         <>
@@ -9,7 +10,7 @@ function Pricetag({price, size, tagStyle, textStyle}) {
             <IconContext.Provider value={{
                 style: {
                     transform: "rotate(.625turn)",
-                    color: "white",
+                    color: fillColor,
                 },
                 size: size
             }}>
@@ -20,7 +21,7 @@ function Pricetag({price, size, tagStyle, textStyle}) {
             <IconContext.Provider value={{
                 style: {
                     transform: "rotate(.625turn)",
-                    color: "black"
+                    color: outlineColor
                 },
                 size: size
             }}>

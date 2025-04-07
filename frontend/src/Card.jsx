@@ -18,7 +18,10 @@ function Card({card}) {
                 objectFit: "fill"
             }}/>
 
-            <Pricetag price={card.price.toFixed(2)} size={"100px"} 
+            <Pricetag price={card.price.toFixed(2)} 
+            size={"100px"} 
+            fillColor={"white"}
+            outlineColor={"black"}
             tagStyle={{
                 position: "absolute",
                 right: "-15px",
