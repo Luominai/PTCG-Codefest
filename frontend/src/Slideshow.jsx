@@ -2,7 +2,7 @@ import { BsChevronLeft, BsChevronRight } from "react-icons/bs"
 import { Card } from './Card'
 import { useState } from "react"
 
-function Slideshow() {
+function Slideshow({cards}) {
     const [currentCard, setCurrentCard] = useState(0)
     const [leftHover, setLeftHover] = useState(false)
     const [rightHover, setRightHover] = useState(false)
@@ -19,6 +19,9 @@ function Slideshow() {
                 cursor: "pointer",
                 backgroundColor: leftHover ? "lightgray" : ""
             }}
+            onClick={() => {
+                setCurrentCard(currentCard - 1 > 0 ? currentCard - 1 : cards.length - 1)
+            }}
             onMouseEnter={() => {
                 setLeftHover(true)
             }}
@@ -26,11 +29,14 @@ function Slideshow() {
                 setLeftHover(false)
             }}
             />
-            <Card price={100.99} imgSource={"https://archives.bulbagarden.net/media/upload/thumb/0/0b/HoundoomScarletViolet34.jpg/270px-HoundoomScarletViolet34.jpg"}/>
+            <Card card={cards[currentCard]}/>
             <BsChevronRight style={{
                 fontSize: "70px",
                 cursor: "pointer",
                 backgroundColor: rightHover ? "lightgray" : ""
+            }}
+            onClick={() => {
+                setCurrentCard(currentCard + 1 < cards.length ? currentCard + 1 : 0)
             }}
             onMouseEnter={() => {
                 setRightHover(true)

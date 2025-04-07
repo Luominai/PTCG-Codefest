@@ -1,7 +1,7 @@
 import { Pricetag } from "./Pricetag"
 
 
-function Card({imgSource, price}) {
+function Card({card}) {
 
     return(
         <>
@@ -12,13 +12,13 @@ function Card({imgSource, price}) {
             position: "relative"
         }}
         >
-            <img src={imgSource} style={{
+            <img src={card.image} style={{
                 width: "100%",
                 height: "100%",
                 objectFit: "fill"
             }}/>
 
-            <Pricetag price={price} size={"100px"} 
+            <Pricetag price={card.price.toFixed(2)} size={"100px"} 
             tagStyle={{
                 position: "absolute",
                 right: "-15px",
