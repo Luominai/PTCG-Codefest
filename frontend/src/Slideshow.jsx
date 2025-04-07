@@ -20,7 +20,7 @@ function Slideshow({cards}) {
                 backgroundColor: leftHover ? "lightgray" : ""
             }}
             onClick={() => {
-                setCurrentCard(currentCard - 1 > 0 ? currentCard - 1 : cards.length - 1)
+                setCurrentCard(currentCard - 1 >= 0 ? currentCard - 1 : cards.length - 1)
             }}
             onMouseEnter={() => {
                 setLeftHover(true)
