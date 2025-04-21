@@ -1,8 +1,14 @@
 import { useState } from 'react'
 import { PlayerIcon } from './PlayerIcon'
-import { Slideshow } from './Slideshow'
+import { Carousel } from './Carousel'
 
 const testCards = [
+    {price: 12.7, image: "https://images.pokemontcg.io/sm12/1.png"},
+    {price: 14.39, image: "https://images.pokemontcg.io/base4/3.png"},
+    {price: 12.0, image: "https://images.pokemontcg.io/ex7/3.png"},
+    {price: 12.7, image: "https://images.pokemontcg.io/sm12/1.png"},
+    {price: 14.39, image: "https://images.pokemontcg.io/base4/3.png"},
+    {price: 12.0, image: "https://images.pokemontcg.io/ex7/3.png"},
     {price: 12.7, image: "https://images.pokemontcg.io/sm12/1.png"},
     {price: 14.39, image: "https://images.pokemontcg.io/base4/3.png"},
     {price: 12.0, image: "https://images.pokemontcg.io/ex7/3.png"}
@@ -38,7 +44,8 @@ function App() {
                         flexDirection: "column",
                         justifyContent: "center"
                     }}>
-                        <Slideshow cards={testCards}/>
+                        {/* <Slideshow cards={testCards}/> */}
+                        <Carousel cards={testCards}/>
                     </div>
                 </div>
             </div>
