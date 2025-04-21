@@ -22,29 +22,20 @@ function App() {
             <div style={{
                 height: "100dvh",
                 display: "flex",
-                flexDirection: "column"
+                flexDirection: "column",
+                overflow: "hidden"
             }}>
                 <div style={{
                     display: "flex",
-                    flexGrow: 0,
-                    justifyContent: "space-evenly"
-                }}>
-                    <PlayerIcon color={"blue"} name={"Name"} money={100}/>
-                    <PlayerIcon color={"red"} name={"Name"} money={100}/>
-                    <PlayerIcon color={"green"} name={"Name"} money={100}/>
-                    <PlayerIcon color={"yellow"} name={"Name"} money={100}/>
-                </div>
-                <div style={{
-                    display: "flex",
+                    flexDirection: "column",
                     flexGrow: 1,
                     justifyContent: "center"
                 }}>
                     <div style={{
                         display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center"
+                        justifyContent: "center",
+                        // overflow: "hidden"
                     }}>
-                        {/* <Slideshow cards={testCards}/> */}
                         <Carousel cards={testCards}/>
                     </div>
                 </div>

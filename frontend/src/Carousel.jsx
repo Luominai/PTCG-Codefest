@@ -8,7 +8,10 @@ let dragging = false
 let previousVelocity = 0
 let velocity = 0
 let selected = 0
-const deceleration = 5
+const useConstDeceleration = false
+const constDeceleration = 5
+const percentDeceleration = .95
+const snapThreshold = 3
 const rotationMultiplier = 1
 const updateFrequency = 50
 
@@ -70,7 +73,7 @@ function Carousel({cards}) {
         <div id={"scene"} style={{
             perspective: "1000px",
             width: `${width}px`,
-            height: `${height}px`
+            height: `${height}px`,
         }}>
             {/* This div creates the object we want to display in 3d space */}
             {/* width: 100% and height: 100% are used so that this element's transform-origin is centered at the center of the 3d space */}
@@ -87,7 +90,7 @@ function Carousel({cards}) {
                 transformStyle: "preserve-3d",
                 transform: `rotateY(${selected * angle}deg) translateZ(${distance * -1}px)`,
                 transformOrigin: `center center ${distance * -1}px`,
-                transition: "transform 0.1s"
+                transition: "transform 1s"
             }}>
                 {cards.map((card, index) => (
                     // The divs inside here make up the faces of the 3d object
@@ -111,38 +114,43 @@ function Carousel({cards}) {
 }
 
 function handleMouseDown(e) {
+    e.preventDefault()
     const carousel = document.getElementById("carousel")
     dragging = true
     carousel.style.transition = "transform .1s"
 }
 function handleMouseMove(e) {
+    e.preventDefault()
     if (dragging) {
         velocity = e.movementX
         console.log(e.movementX)
     }
 }
 function handleMouseUp(e) {
+    e.preventDefault()
     dragging = false
 }
 function handleMouseLeave(e) {
+    e.preventDefault()
     dragging = false
 }
 function handleVelocity(angle, distance, frequency) {
     const carousel = document.getElementById("carousel")
     previousVelocity = velocity
     if (velocity > 0) {
-        velocity = Math.max(0, velocity - deceleration)
+        velocity = Math.max(0, useConstDeceleration ? velocity - constDeceleration : velocity * percentDeceleration)
         selected = selected + (velocity * rotationMultiplier / 10000 * frequency)
         carousel.style.transform = `rotateY(${selected * angle}deg) translateZ(${distance * -1}px)`
     }
     if (velocity < 0) {
-        velocity = Math.min(0, velocity + deceleration)
+        velocity = Math.min(0, useConstDeceleration ? velocity + constDeceleration : velocity * percentDeceleration)
         selected = selected + (velocity * rotationMultiplier / 10000 * frequency)
         carousel.style.transform = `rotateY(${selected * angle}deg) translateZ(${distance * -1}px)`
     }
-    if (velocity === 0 && previousVelocity !== 0) {
+    if ((useConstDeceleration && velocity === 0 && previousVelocity !== 0) || (!useConstDeceleration && Math.abs(velocity) < snapThreshold && Math.abs(previousVelocity) >= snapThreshold)) {
         setTimeout(() => {
-            if (velocity === 0 && !dragging) {
+            if ((!dragging && useConstDeceleration && velocity === 0 ) || (!dragging && !useConstDeceleration  && velocity < snapThreshold)) {
+                velocity = 0
                 selected = Math.round(selected)
                 carousel.style.transition = "transform .8s"
                 carousel.style.transform = `rotateY(${selected * angle}deg) translateZ(${distance * -1}px)`
