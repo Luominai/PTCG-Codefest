@@ -9,7 +9,8 @@ function Panel({card}) {
             userSelect: "none",
             position: "relative",
             display: "flex",
-            justifyContent: "center"
+            justifyContent: "center",
+            transformStyle: "preserve-3d"
         }}>
             <img src={card.image} draggable={false} style={{
                 width: "200px",
@@ -17,6 +18,7 @@ function Panel({card}) {
                 objectFit: "fill",
                 position: "absolute",
                 backfaceVisibility: "hidden",
+                WebkitBackfaceVisibility: "hidden",
                 zIndex: 1,
             }}/>
             <img src={cardback} draggable={false} style={{

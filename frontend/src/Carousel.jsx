@@ -103,6 +103,7 @@ function Carousel({cards}) {
                         width: `${width}px`,
                         height: `${height}px`,
                         transform: `rotateY(${angle * index}deg) translateZ(${distance}px)`,
+                        transformStyle: "preserve-3d"
                     }}>
                         <Panel card={card}/>
                     </div>
@@ -138,18 +139,35 @@ function handleVelocity(angle, distance, frequency) {
     const carousel = document.getElementById("carousel")
     previousVelocity = velocity
     if (velocity > 0) {
-        velocity = Math.max(0, useConstDeceleration ? velocity - constDeceleration : velocity * percentDeceleration)
+        velocity = Math.max(0, useConstDeceleration ? 
+                                velocity - constDeceleration : 
+                                velocity * percentDeceleration)
         selected = selected + (velocity * rotationMultiplier / 10000 * frequency)
         carousel.style.transform = `rotateY(${selected * angle}deg) translateZ(${distance * -1}px)`
     }
     if (velocity < 0) {
-        velocity = Math.min(0, useConstDeceleration ? velocity + constDeceleration : velocity * percentDeceleration)
+        velocity = Math.min(0, useConstDeceleration ? 
+                                velocity + constDeceleration : 
+                                velocity * percentDeceleration)
         selected = selected + (velocity * rotationMultiplier / 10000 * frequency)
         carousel.style.transform = `rotateY(${selected * angle}deg) translateZ(${distance * -1}px)`
     }
-    if ((useConstDeceleration && velocity === 0 && previousVelocity !== 0) || (!useConstDeceleration && Math.abs(velocity) < snapThreshold && Math.abs(previousVelocity) >= snapThreshold)) {
+    if ((useConstDeceleration && velocity === 0 && previousVelocity !== 0)) {
         setTimeout(() => {
-            if ((!dragging && useConstDeceleration && velocity === 0 ) || (!dragging && !useConstDeceleration  && velocity < snapThreshold)) {
+            if ((!dragging && velocity === 0 )) {
+                selected = Math.round(selected)
+                carousel.style.transition = "transform .8s"
+                carousel.style.transform = `rotateY(${selected * angle}deg) translateZ(${distance * -1}px)`
+
+                setTimeout(() => {
+                    carousel.style.transition = "transform .1s"
+                }, 800)
+            }
+        }, 500)
+    }
+    if ((!useConstDeceleration && Math.abs(velocity) < snapThreshold && Math.abs(previousVelocity) >= snapThreshold)) {
+        setTimeout(() => {
+            if ((!dragging && velocity < snapThreshold)) {
                 velocity = 0
                 selected = Math.round(selected)
                 carousel.style.transition = "transform .8s"
