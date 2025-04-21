@@ -15,6 +15,11 @@ const snapThreshold = 3
 const rotationMultiplier = 1
 const updateFrequency = 50
 
+// vars for touch event
+let previousTouch = undefined
+const touchVelocityMultiplier = 2
+const touchMoveThreshold = 10
+
 function Carousel({cards}) {
     // the measure ref is used to dynamically determine the size of a card
     const measure = useRef()         
@@ -40,6 +45,12 @@ function Carousel({cards}) {
         scene.addEventListener("mousemove", handleMouseMove)
         scene.addEventListener("mouseup", handleMouseUp)
         scene.addEventListener("mouseleave", handleMouseLeave)
+        
+        scene.addEventListener("touchstart", handleMouseDown)
+        scene.addEventListener("touchmove", handleTouchMove)
+        scene.addEventListener("touchend", handleMouseUp)
+        scene.addEventListener("touchcancel", handleMouseLeave)
+
 
         const velocityInterval = setInterval(() => handleVelocity(angle, distance, updateFrequency), updateFrequency)
 
@@ -127,12 +138,24 @@ function handleMouseMove(e) {
         console.log(e.movementX)
     }
 }
+function handleTouchMove(e) {
+    e.preventDefault()
+    const touch = e.touches[0]
+    if (dragging && previousTouch !== undefined) {
+        const movement = (touch.pageX - previousTouch.pageX)
+        velocity = movement > touchMoveThreshold ? movement * touchVelocityMultiplier : velocity
+        // document.getElementById("debug").innerHTML = `${velocity}`
+    }
+    previousTouch = touch
+}
 function handleMouseUp(e) {
     e.preventDefault()
+    document.getElementById("debug").innerHTML = "stopped"
     dragging = false
 }
 function handleMouseLeave(e) {
     e.preventDefault()
+    document.getElementById("debug").innerHTML = "stopped"
     dragging = false
 }
 function handleVelocity(angle, distance, frequency) {

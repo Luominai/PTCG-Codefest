@@ -38,6 +38,9 @@ function App() {
                     }}>
                         <Carousel cards={testCards}/>
                     </div>
+                    <div id="debug">
+                        hi
+                    </div>
                 </div>
             </div>
         </>
