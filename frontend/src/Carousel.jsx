@@ -5,6 +5,7 @@ const cardForMeasure = {price: 12.7, image: "https://images.pokemontcg.io/sm12/1
 
 // vars for handling drag event
 let dragging = false 
+let previousVelocity = 0
 let velocity = 0
 let selected = 0
 const deceleration = 5
@@ -110,7 +111,9 @@ function Carousel({cards}) {
 }
 
 function handleMouseDown(e) {
+    const carousel = document.getElementById("carousel")
     dragging = true
+    carousel.style.transition = "transform .1s"
 }
 function handleMouseMove(e) {
     if (dragging) {
@@ -126,6 +129,7 @@ function handleMouseLeave(e) {
 }
 function handleVelocity(angle, distance, frequency) {
     const carousel = document.getElementById("carousel")
+    previousVelocity = velocity
     if (velocity > 0) {
         velocity = Math.max(0, velocity - deceleration)
         selected = selected + (velocity * rotationMultiplier / 10000 * frequency)
@@ -136,11 +140,16 @@ function handleVelocity(angle, distance, frequency) {
         selected = selected + (velocity * rotationMultiplier / 10000 * frequency)
         carousel.style.transform = `rotateY(${selected * angle}deg) translateZ(${distance * -1}px)`
     }
-    if (velocity === 0) {
+    if (velocity === 0 && previousVelocity !== 0) {
         setTimeout(() => {
             if (velocity === 0 && !dragging) {
                 selected = Math.round(selected)
+                carousel.style.transition = "transform .8s"
                 carousel.style.transform = `rotateY(${selected * angle}deg) translateZ(${distance * -1}px)`
+
+                setTimeout(() => {
+                    carousel.style.transition = "transform .1s"
+                }, 800)
             }
         }, 500)
     }
