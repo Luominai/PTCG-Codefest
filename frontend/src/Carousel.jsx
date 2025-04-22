@@ -1,32 +1,16 @@
 import { useState, useRef, useEffect } from "react"
 import { Panel } from "././Panel"
+import { setup } from "./spinController"
 
 const cardForMeasure = {price: 12.7, image: "https://images.pokemontcg.io/sm12/1.png"}
-
-// vars for handling drag event
-let dragging = false 
-let previousVelocity = 0
-let velocity = 0
-let selected = 0
-const useConstDeceleration = false
-const constDeceleration = 5
-const percentDeceleration = .95
-const snapThreshold = 3
-const rotationMultiplier = 1
-const updateFrequency = 50
-
-// vars for touch event
-let previousTouch = undefined
-const touchVelocityMultiplier = 2
-const touchMoveThreshold = 10
 
 function Carousel({cards}) {
     // the measure ref is used to dynamically determine the size of a card
     const measure = useRef()         
 
     // vars for handling rendering
-    const angle = 360 / cards.length  // the angle in degrees between one card and its neighbors
-    const [distance, setDistance] = useState(0) // the distance between the center of the 3d shape and its faces
+    const [angle, setAngle] = useState(360 / cards.length)
+    const [distance, setDistance] = useState(0)
     const [width, setWidth] = useState(0)       // width of a card
     const [height, setHeight] = useState(0)     // height of a card
 
@@ -34,32 +18,19 @@ function Carousel({cards}) {
     useEffect(() => {   
         const width = measure.current.scrollWidth   // use scrollWidth for the actual size of the content, not just the visible portion (the whole element will be out of view)
         const height = measure.current.scrollHeight // same reason as above
+        const angle = 360 / cards.length                  
         const distance = (width / 2) / Math.tan((angle / 2) * (2 * Math.PI / 360))
+
         setWidth(width)
         setHeight(height)
+        setAngle(angle)
         setDistance(distance)
-        console.log(width, height, distance)
 
-        const scene = document.getElementById("scene")
-        scene.addEventListener("mousedown", handleMouseDown)
-        scene.addEventListener("mousemove", handleMouseMove)
-        scene.addEventListener("mouseup", handleMouseUp)
-        scene.addEventListener("mouseleave", handleMouseLeave)
-        
-        scene.addEventListener("touchstart", handleMouseDown)
-        scene.addEventListener("touchmove", handleTouchMove)
-        scene.addEventListener("touchend", handleMouseUp)
-        scene.addEventListener("touchcancel", handleMouseLeave)
-
-
-        const velocityInterval = setInterval(() => handleVelocity(angle, distance, updateFrequency), updateFrequency)
+        const [interval, removeListeners] = setup("carousel", "scene", angle, distance)
 
         return () => {
-            scene.removeEventListener("mousedown", handleMouseDown)
-            scene.removeEventListener("mousemove", handleMouseMove)
-            scene.removeEventListener("mouseup", handleMouseUp)
-            scene.removeEventListener("mouseleave", handleMouseLeave)
-            clearInterval(velocityInterval)
+            removeListeners()
+            clearInterval(interval)
         }
     }, [])
 
@@ -99,7 +70,7 @@ function Carousel({cards}) {
                 height: "100%",
                 position: "relative",
                 transformStyle: "preserve-3d",
-                transform: `rotateY(${selected * angle}deg) translateZ(${distance * -1}px)`,
+                transform: `translateZ(${distance * -1}px)`,
                 transformOrigin: `center center ${distance * -1}px`,
                 transition: "transform 1s"
             }}>
@@ -123,85 +94,6 @@ function Carousel({cards}) {
         </div>
         </>
     )
-}
-
-function handleMouseDown(e) {
-    e.preventDefault()
-    const carousel = document.getElementById("carousel")
-    dragging = true
-    carousel.style.transition = "transform .1s"
-}
-function handleMouseMove(e) {
-    e.preventDefault()
-    if (dragging) {
-        velocity = e.movementX
-        console.log(e.movementX)
-    }
-}
-function handleTouchMove(e) {
-    e.preventDefault()
-    const touch = e.touches[0]
-    if (dragging && previousTouch !== undefined) {
-        const movement = (touch.pageX - previousTouch.pageX)
-        velocity = movement > touchMoveThreshold ? movement * touchVelocityMultiplier : velocity
-        // document.getElementById("debug").innerHTML = `${velocity}`
-    }
-    previousTouch = touch
-}
-function handleMouseUp(e) {
-    e.preventDefault()
-    document.getElementById("debug").innerHTML = "stopped"
-    dragging = false
-}
-function handleMouseLeave(e) {
-    e.preventDefault()
-    document.getElementById("debug").innerHTML = "stopped"
-    dragging = false
-}
-function handleVelocity(angle, distance, frequency) {
-    const carousel = document.getElementById("carousel")
-    previousVelocity = velocity
-    if (velocity > 0) {
-        velocity = Math.max(0, useConstDeceleration ? 
-                                velocity - constDeceleration : 
-                                velocity * percentDeceleration)
-        selected = selected + (velocity * rotationMultiplier / 10000 * frequency)
-        carousel.style.transform = `rotateY(${selected * angle}deg) translateZ(${distance * -1}px)`
-    }
-    if (velocity < 0) {
-        velocity = Math.min(0, useConstDeceleration ? 
-                                velocity + constDeceleration : 
-                                velocity * percentDeceleration)
-        selected = selected + (velocity * rotationMultiplier / 10000 * frequency)
-        carousel.style.transform = `rotateY(${selected * angle}deg) translateZ(${distance * -1}px)`
-    }
-    if ((useConstDeceleration && velocity === 0 && previousVelocity !== 0)) {
-        setTimeout(() => {
-            if ((!dragging && velocity === 0 )) {
-                selected = Math.round(selected)
-                carousel.style.transition = "transform .8s"
-                carousel.style.transform = `rotateY(${selected * angle}deg) translateZ(${distance * -1}px)`
-
-                setTimeout(() => {
-                    carousel.style.transition = "transform .1s"
-                }, 800)
-            }
-        }, 500)
-    }
-    if ((!useConstDeceleration && Math.abs(velocity) < snapThreshold && Math.abs(previousVelocity) >= snapThreshold)) {
-        setTimeout(() => {
-            if ((!dragging && velocity < snapThreshold)) {
-                velocity = 0
-                selected = Math.round(selected)
-                carousel.style.transition = "transform .8s"
-                carousel.style.transform = `rotateY(${selected * angle}deg) translateZ(${distance * -1}px)`
-
-                setTimeout(() => {
-                    carousel.style.transition = "transform .1s"
-                }, 800)
-            }
-        }, 500)
-    }
 }
 
 export { Carousel }
