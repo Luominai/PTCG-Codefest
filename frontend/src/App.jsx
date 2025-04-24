@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { PlayerIcon } from './PlayerIcon'
 import { Carousel } from './Carousel'
+import TestAPI from './TestAPI'
 
 const testCards = [
     {price: 12.7, image: "https://images.pokemontcg.io/sm12/1.png"},
@@ -40,6 +41,9 @@ function App() {
                     </div>
                     <div id="debug">
                         hi
+                    </div>
+                    <div> 
+                        <TestAPI/>
                     </div>
                 </div>
             </div>
