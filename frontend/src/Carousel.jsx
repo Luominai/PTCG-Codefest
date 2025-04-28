@@ -63,15 +63,14 @@ function Carousel({cards, visible}) {
             {/* Position relative is here so its children can be position absolute */}
             {/* transform-style preserve-3d is here so that the children render in the 3d space established above */}
             {/* translateZ is here so that when the size of the carousel changes, we move it back accordingly to keep the cards the same size */}
-            {/* transformOrigin adjusts for the translateZ */}
             {/* rotateY is here so the carousel turns when changing selected card */}
             <div id={"carousel"} style={{
                 width: "100%",
                 height: "100%",
                 position: "relative",
                 transformStyle: "preserve-3d",
-                transform: `translateZ(${distance * -1}px) translateY(${visible ? 0 : 2 * height}px)`,
-                transformOrigin: `center center ${distance * -1}px`,
+                transform: `translateZ(${distance * -1}px) translateY(${visible ? 0 : 2 * height}px) rotateY(0deg)`,
+                transformOrigin: `center center`,
                 transition: "transform 1s"
             }}>
                 {cards.map((card, index) => (

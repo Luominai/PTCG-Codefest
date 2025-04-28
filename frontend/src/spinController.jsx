@@ -21,6 +21,8 @@ const rotationMultiplier = 1
 const updateFrequency = 50
 const touchVelocityMultiplier = 2
 const touchMoveThreshold = 10
+const timeTillAutoSnap = 800
+const rotationRegex = /rotateY\(-*\d*.*\d*deg\)/
 
 function setup(carouselId, sceneId, angle, distance) {
     _carousel = document.getElementById(carouselId)
@@ -50,19 +52,25 @@ function handleTouchMove(e) {
     const touch = e.touches[0]
     if (_dragging && _previousTouch !== undefined) {
         const movement = (touch.pageX - _previousTouch.pageX)
-        _velocity = movement > touchMoveThreshold ? movement * touchVelocityMultiplier : _velocity
+        _velocity = Math.abs(movement) > touchMoveThreshold ? movement * touchVelocityMultiplier : _velocity
     }
     _previousTouch = touch
+}
+function handleTouchEnd() {
+    e.preventDefault()
+    e._dragging = false
+    _previousTouch = undefined
+    snap(timeTillAutoSnap)
 }
 function handleMouseUp(e) {
     e.preventDefault()
     _dragging = false
-    snap(1000)
+    snap(timeTillAutoSnap)
 }
 function handleMouseLeave(e) {
     e.preventDefault()
     _dragging = false
-    snap(1000)
+    snap(timeTillAutoSnap)
 }
 function handleVelocity() {
     _previousVelocity = _velocity
@@ -86,7 +94,7 @@ function snap(delay = 500) {
             _selected = Math.round(_selected)
             _carousel.style.transition = "transform .8s"
             _carousel.style.transform = _carousel.style.transform.replace(
-                /rotateY\(\d*px\)|rotateY\(-\d*px\)/, 
+                rotationRegex, 
                 `rotateY(${_selected * _angle}deg)`
             )
 
@@ -109,7 +117,7 @@ function updateRotation() {
     }
     _selected = _selected + (_velocity * rotationMultiplier / 10000 * updateFrequency)
     _carousel.style.transform = _carousel.style.transform.replace(
-        /rotateY\(\d*px\)|rotateY\(-\d*px\)/, 
+        rotationRegex, 
         `rotateY(${_selected * _angle}deg)`
     )
 }
@@ -121,8 +129,8 @@ function attachListeners() {
     
     _scene.addEventListener("touchstart", handleMouseDown)
     _scene.addEventListener("touchmove", handleTouchMove)
-    _scene.addEventListener("touchend", handleMouseUp)
-    _scene.addEventListener("touchcancel", handleMouseLeave)
+    _scene.addEventListener("touchend", handleTouchEnd)
+    _scene.addEventListener("touchcancel", handleTouchEnd)
 }
 function removeListeners() {
     _scene.removeEventListener("mousedown", handleMouseDown)

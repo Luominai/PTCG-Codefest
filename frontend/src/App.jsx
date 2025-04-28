@@ -69,42 +69,13 @@ function App() {
                         Open
                     </button>
                 </div>
+                {/* <div> 
+                    <TestAPI/>
+                </div> */}
             </div>
         </div>
-            <div style={{
-                height: "100dvh",
-                display: "flex",
-                flexDirection: "column",
-                overflow: "hidden"
-            }}>
-                <div style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    flexGrow: 1,
-                    justifyContent: "center"
-                }}>
-                    <div style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        // overflow: "hidden"
-                    }}>
-                        <Carousel cards={testCards}/>
-                    </div>
-                    <div id="debug">
-                        hi
-                    </div>
-                    <div> 
-                        <TestAPI/>
-                    </div>
-                </div>
-            </div>
         </>
     )
-}
-
-function selectPack() {
-    const index = getIndexOfSelected()
-
 }
 
 export default App
