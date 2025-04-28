@@ -7,6 +7,7 @@ let _previousTouch = undefined
 
 // also needed for drag event but need to be provided
 let _angle = 0
+let _numCards = 0
 let _distance = 0
 let _carousel = null
 let _scene = null
@@ -25,6 +26,7 @@ function setup(carouselId, sceneId, angle, distance) {
     _carousel = document.getElementById(carouselId)
     _scene = document.getElementById(sceneId)
     _angle = angle
+    _numCards = 360 / angle
     _distance = distance
     attachListeners()
     return [setInterval(handleVelocity, updateFrequency), removeListeners]
@@ -83,7 +85,10 @@ function snap(delay = 500) {
             _velocity = 0
             _selected = Math.round(_selected)
             _carousel.style.transition = "transform .8s"
-            _carousel.style.transform = `rotateY(${_selected * _angle}deg) translateZ(${_distance * -1}px)`
+            _carousel.style.transform = _carousel.style.transform.replace(
+                /rotateY\(\d*px\)|rotateY\(-\d*px\)/, 
+                `rotateY(${_selected * _angle}deg)`
+            )
 
             setTimeout(() => {
                 _carousel.style.transition = "transform .1s"
@@ -103,7 +108,10 @@ function updateRotation() {
                                 _velocity * percentDeceleration)
     }
     _selected = _selected + (_velocity * rotationMultiplier / 10000 * updateFrequency)
-    _carousel.style.transform = `rotateY(${_selected * _angle}deg) translateZ(${_distance * -1}px)`
+    _carousel.style.transform = _carousel.style.transform.replace(
+        /rotateY\(\d*px\)|rotateY\(-\d*px\)/, 
+        `rotateY(${_selected * _angle}deg)`
+    )
 }
 function attachListeners() {
     _scene.addEventListener("mousedown", handleMouseDown)
@@ -122,5 +130,8 @@ function removeListeners() {
     _scene.removeEventListener("mouseup", handleMouseUp)
     _scene.removeEventListener("mouseleave", handleMouseLeave)
 }
+function getIndexOfSelected() {
+    return Math.round(_selected % _numCards)
+}
 
-export { setup }
+export { setup, getIndexOfSelected }

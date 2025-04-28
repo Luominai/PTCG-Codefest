@@ -4,7 +4,7 @@ import { setup } from "./spinController"
 
 const cardForMeasure = {price: 12.7, image: "https://images.pokemontcg.io/sm12/1.png"}
 
-function Carousel({cards}) {
+function Carousel({cards, visible}) {
     // the measure ref is used to dynamically determine the size of a card
     const measure = useRef()         
 
@@ -70,7 +70,7 @@ function Carousel({cards}) {
                 height: "100%",
                 position: "relative",
                 transformStyle: "preserve-3d",
-                transform: `translateZ(${distance * -1}px)`,
+                transform: `translateZ(${distance * -1}px) translateY(${visible ? 0 : 2 * height}px)`,
                 transformOrigin: `center center ${distance * -1}px`,
                 transition: "transform 1s"
             }}>
