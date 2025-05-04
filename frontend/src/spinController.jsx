@@ -93,10 +93,7 @@ function snap(delay = 500) {
             _velocity = 0
             _selected = Math.round(_selected)
             _carousel.style.transition = "transform .8s"
-            _carousel.style.transform = _carousel.style.transform.replace(
-                rotationRegex, 
-                `rotateY(${_selected * _angle}deg)`
-            )
+            _carousel.style.rotateY = `rotateY${_selected * _angle}deg)`
 
             setTimeout(() => {
                 _carousel.style.transition = "transform .1s"
