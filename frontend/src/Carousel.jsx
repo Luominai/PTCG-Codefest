@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from "react"
 import { Panel } from "././Panel"
-import { setup } from "./spinController"
+import { getIndexOfSelected, setup, setCarouselEnabled } from "./spinController"
 
 const cardForMeasure = {price: 12.7, image: "https://images.pokemontcg.io/sm12/1.png"}
 
-function Carousel({cards, visible}) {
+function Carousel({cards}) {
     // the measure ref is used to dynamically determine the size of a card
     const measure = useRef()         
 
@@ -13,6 +13,8 @@ function Carousel({cards, visible}) {
     const [distance, setDistance] = useState(0)
     const [width, setWidth] = useState(0)       // width of a card
     const [height, setHeight] = useState(0)     // height of a card
+    const [selected, setSelected] = useState(-1)  // index of selected card
+    const [mode, setMode] = useState("select")
 
     // on render, grab the width of the card from the measure ref and calculate distance
     useEffect(() => {   
@@ -69,11 +71,15 @@ function Carousel({cards, visible}) {
                 height: "100%",
                 position: "relative",
                 transformStyle: "preserve-3d",
-                transform: `translateZ(${distance * -1}px) translateY(${visible ? 0 : 2 * height}px) rotateY(0deg)`,
+                transform: `translateZ(${distance * -1}px) rotateY(0deg)`,
                 transformOrigin: `center center`,
                 transition: "transform 1s"
             }}>
-                {cards.map((card, index) => (
+                {cards.map((card, index) => {
+                    const thereIsACardSelected = selected >= 0
+                    const thisCardIsSelected = selected === index
+
+                    return (
                     // The divs inside here make up the faces of the 3d object
                     /* The divs are positioned absolutely so that they are relative to its nearest relatively positioned parent (the 3d object)
                     which means they will stack on top of each other*/
@@ -83,12 +89,61 @@ function Carousel({cards, visible}) {
                         position: "absolute",
                         width: `${width}px`,
                         height: `${height}px`,
-                        transform: `rotateY(${angle * index}deg) translateZ(${distance}px)`,
-                        transformStyle: "preserve-3d"
+                        transform: `rotateY(${angle * index}deg)`,
+                        transformStyle: "preserve-3d",
                     }}>
-                        <Panel card={card}/>
+                        <div style={{
+                            transformStyle: "preserve-3d",
+                            transform: `translateZ(${thisCardIsSelected ? 750 : distance}px)`,
+                            opacity: thereIsACardSelected && !thisCardIsSelected ? 0 : 1,
+                            transition: "transform 0.5s, opacity 0.2s"
+                        }}>
+                            <Panel card={card}/>
+                        </div>
                     </div>
-                ))}
+                    )
+                })}
+            </div>
+            <div style={{
+                display: "flex",
+                transformStyle: "preserve-3d",
+                justifyContent: "center",
+                position: "relative",
+                opacity: selected >= 0 ? 0 : 1,
+                transition: "opacity 0.2s"
+            }}>
+                <button style={{
+                    position: "absolute",
+                    top: "20px",
+                    transformStyle: "preserve-3d",
+                    width: "160px",
+                    height: "50px",
+                    backgroundColor: "#60d0f8",
+                    border: "3px solid #ecfafb",
+                    borderRadius: "40px",
+                    boxShadow: "0px 0px 3px #ecfafb",
+                    boxShadow: "0px 0px 6px 2px #e1e3ee",
+                    color: "#ecfafb",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    transition: "transform 0.1s",
+                }}
+                onClick={() => {
+                    const button = document.getElementById("button")
+                    button.style.transform = "scale(0.95)"
+                    setTimeout(() => {
+                        button.style.transform = "scale(1)"
+                    }, 100)
+
+                    const selectedIndex = getIndexOfSelected()
+                    console.log(selectedIndex)
+                    setSelected(selectedIndex)
+                    setCarouselEnabled(false)
+                }}
+                id={"button"}
+                >
+                    Open
+                </button>
             </div>
         </div>
         </>

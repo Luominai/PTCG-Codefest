@@ -1,4 +1,5 @@
 // vars for handling drag event
+let _enabled = true
 let _dragging = false 
 let _previousVelocity = 0
 let _velocity = 0
@@ -36,12 +37,18 @@ function setup(carouselId, sceneId, angle, distance) {
 
 function handleMouseDown(e) {
     e.preventDefault()
+    if (!_enabled) {
+        return
+    }
     _dragging = true
     _velocity = 0
     _carousel.style.transition = "transform .1s"
 }
 function handleMouseMove(e) {
     e.preventDefault()
+    if (!_enabled) {
+        return
+    }
     if (_dragging) {
         _velocity = e.movementX
         console.log(e.movementX)
@@ -49,6 +56,9 @@ function handleMouseMove(e) {
 }
 function handleTouchMove(e) {
     e.preventDefault()
+    if (!_enabled) {
+        return
+    }
     const touch = e.touches[0]
     if (_dragging && _previousTouch !== undefined) {
         const movement = (touch.pageX - _previousTouch.pageX)
@@ -58,21 +68,33 @@ function handleTouchMove(e) {
 }
 function handleTouchEnd() {
     e.preventDefault()
+    if (!_enabled) {
+        return
+    }
     e._dragging = false
     _previousTouch = undefined
     snap(timeTillAutoSnap)
 }
 function handleMouseUp(e) {
     e.preventDefault()
+    if (!_enabled) {
+        return
+    }
     _dragging = false
     snap(timeTillAutoSnap)
 }
 function handleMouseLeave(e) {
     e.preventDefault()
+    if (!_enabled) {
+        return
+    }
     _dragging = false
     snap(timeTillAutoSnap)
 }
 function handleVelocity() {
+    if (!_enabled) {
+        return
+    }
     _previousVelocity = _velocity
     updateRotation()
     if (useConstDeceleration) {
@@ -86,14 +108,18 @@ function handleVelocity() {
         }
     }
 }
-function snap(delay = 500) {
+function snap(delay = 500, unconditional=false) {
     setTimeout(() => {
         const condition = useConstDeceleration ? _velocity === 0 : Math.abs(_velocity) < snapThreshold
-        if (condition) {
+        if (condition || unconditional) {
+            console.log("snap")
             _velocity = 0
             _selected = Math.round(_selected)
             _carousel.style.transition = "transform .8s"
-            _carousel.style.rotateY = `rotateY${_selected * _angle}deg)`
+            _carousel.style.transform = _carousel.style.transform.replace(
+                rotationRegex, 
+                `rotateY(${_selected * _angle}deg)`
+            )
 
             setTimeout(() => {
                 _carousel.style.transition = "transform .1s"
@@ -136,7 +162,16 @@ function removeListeners() {
     _scene.removeEventListener("mouseleave", handleMouseLeave)
 }
 function getIndexOfSelected() {
-    return Math.round(_selected % _numCards)
+    snap(0, true)
+    const offset = -1 * Math.round(_selected) % _numCards
+    console.log(_selected, _numCards, offset)
+    if (offset < 0) {
+        return _numCards + offset
+    }
+    return offset
+}
+function setCarouselEnabled(bool) {
+    _enabled = bool
 }
 
-export { setup, getIndexOfSelected }
+export { setup, getIndexOfSelected, setCarouselEnabled }
